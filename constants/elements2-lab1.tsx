@@ -1,3 +1,5 @@
+import { JSX } from "react";
+
 // Task 2 
 export const stringValue4: string = "Hello World. This is Swift programming language";
 
@@ -37,3 +39,7 @@ const charAt1Based = (s: string, pos1Based: number) => (pos1Based >= 1 && pos1Ba
 export const char10 = charAt1Based(stringValue4, 10);
 export const char15 = charAt1Based(stringValue4, 15);
 export const substring_10_inclusive_15_exclusive = stringValue4.slice(10 - 1, 15 - 1);
+export function map(arg0: ([key, value]: [any, any]) => JSX.Element): { [s: string]: unknown; } | ArrayLike<unknown> {
+  throw new Error("Function not implemented.");
+}
+

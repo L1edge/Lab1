@@ -9,8 +9,9 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { Fonts } from "@/constants/theme";
-import * as Elements from "@/constants/elements1-lab1";
-import * as Elements1 from "@/constants/elements2-lab1";
+import * as Elements1 from "@/constants/elements1-lab1";
+import * as Elements2 from "@/constants/elements2-lab1";
+import * as Elements3 from "@/constants/elements3-lab1";
 
 export default function TabTwoScreen() {
   return (
@@ -33,9 +34,9 @@ export default function TabTwoScreen() {
 
       <Collapsible title="Lab 1">
         <ThemedView>
-          <ThemedText><b>Task 1</b></ThemedText>
+          <ThemedText style={{ fontWeight: "700" }}>Task 1</ThemedText>
 
-          {Object.entries(Elements).map(([key, value]) => (
+          {Object.entries(Elements1).map(([key, value]) => (
             <React.Fragment key={`e1-${key}`}>
               <ThemedText>
                 {key}: {String(value)}
@@ -43,15 +44,35 @@ export default function TabTwoScreen() {
             </React.Fragment>
           ))}
 
-          <ThemedText><b>Task 2</b></ThemedText>
+          <ThemedText style={{ fontWeight: "700", marginTop: 8 }}>
+            Task 2
+          </ThemedText>
 
-          {Object.entries(Elements1).map(([key, value]) => (
+          {Object.entries(Elements2).map(([key, value]) => (
             <React.Fragment key={`e2-${key}`}>
               <ThemedText>
                 {key}: {String(value)}
               </ThemedText>
             </React.Fragment>
           ))}
+
+          <ThemedText style={{ fontWeight: "700", marginTop: 8 }}>
+            Task 3
+          </ThemedText>
+
+          {Object.entries(Elements3).map(([key, value]) => (
+            <React.Fragment key={`e3-${key}`}>
+              <ThemedText>
+                {key}: {String(value)}
+              </ThemedText>
+            </React.Fragment>
+          ))}
+<ThemedText>
+  {Elements3.decimalNumber1?.toString() ?? "Значення не задане"}
+</ThemedText>
+<ThemedText>
+  {Elements3.decimalNumber2?.toString() ?? "Значення не задане"}
+</ThemedText>
         </ThemedView>
       </Collapsible>
 
