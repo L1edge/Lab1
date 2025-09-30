@@ -8,6 +8,8 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Fonts } from '@/constants/theme';
+import * as Elements from '@/constants/elements-lab1';
+
 
 export default function TabTwoScreen() {
   return (
@@ -32,9 +34,13 @@ export default function TabTwoScreen() {
       </ThemedView>
       <Collapsible title="Lab 1">
         <ThemedText>
-          Tasks <br></br>
-          let number1 = 12;
+          Task 1 <br></br>
         </ThemedText>
+          {Object.entries(Elements).map(([key, value]) => (
+    <ThemedText key={key}>
+      {key}: {String(value)}
+    </ThemedText>
+  ))}
     </Collapsible>
       <Collapsible title="Lab 2">
         <ThemedText>
