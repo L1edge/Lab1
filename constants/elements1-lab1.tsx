@@ -7,4 +7,5 @@ export const floatValue: GLfloat = 10235.34;
 export const stringValue: string = "a";
 export const stringValue2: string = "Hello World";
 export const truthValue: boolean = true;
-export const stringValue3: string = "twelve"
+export const stringValue3: string = "twelve";
+
