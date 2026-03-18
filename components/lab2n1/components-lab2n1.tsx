@@ -29,8 +29,8 @@ export default function Lab2n1() {
     const [closureResult, setClosureResult] = useState<string>("Очікування...");
     const [loading, setLoading] = useState(false);
     
-    // Зберігаємо екземпляр класу
-    const mathRef = useRef<MathLogic.Mathematics | null>(null);
+    // ВИПРАВЛЕННЯ 1: Вказуємо Generic-тип <MathLogic.Figure>
+    const mathRef = useRef<MathLogic.Mathematics<MathLogic.Figure> | null>(null);
 
     useEffect(() => {
         runMathDemo();
@@ -40,47 +40,53 @@ export default function Lab2n1() {
         const logs: string[] = [];
         
         // --- 1. Ініціалізація з Замкненням (Constructor Closure) ---
-        const math = new MathLogic.Mathematics((result) => {
+        // ВИПРАВЛЕННЯ 2: Додаємо Generic <MathLogic.Figure> та типізуємо result
+        const math = new MathLogic.Mathematics<MathLogic.Figure>((result: MathLogic.StringStats) => {
             logs.push(`📦 CONSTRUCTOR CLOSURE: Отримано дані! Longest: ${result.longest}`);
         });
 
         // --- 2. Призначення Делегата ---
         math.delegate = new MyDelegate((msg) => {
-            // Додаємо повідомлення від делегата в логи
             setLog(prev => [msg, ...prev]); 
         });
 
         mathRef.current = math;
 
-        // Створення фігур
-        const line = new MathLogic.Line(new MathLogic.Point(1, 8), new MathLogic.Point(4, 8), "Лінія A");
-        const triangle = new MathLogic.Triangle(new MathLogic.Point(1, 1), new MathLogic.Point(1, 4), new MathLogic.Point(3, 1), "Трикутник");
-        const rect = new MathLogic.Rectangle(new MathLogic.Point(5, 5), new MathLogic.Point(5, 7), new MathLogic.Point(8, 7), new MathLogic.Point(8, 5), "Прямокутник");
-        const rhombus = new MathLogic.Rhombus(new MathLogic.Point(6, 0), new MathLogic.Point(7.5, 2), new MathLogic.Point(6, 4), new MathLogic.Point(4.5, 2), "Ромб");
-        const square = new MathLogic.Square(new MathLogic.Point(1, 5), new MathLogic.Point(1, 7), new MathLogic.Point(3, 7), new MathLogic.Point(3, 5), "Квадрат");
+        try {
+            // Створення фігур (Може викинути помилку, якщо дані некоректні)
+            const line = new MathLogic.Line(new MathLogic.Point(1, 8), new MathLogic.Point(4, 8), "Лінія A");
+            const triangle = new MathLogic.Triangle(new MathLogic.Point(1, 1), new MathLogic.Point(1, 4), new MathLogic.Point(3, 1), "Трикутник");
+            const rect = new MathLogic.Rectangle(new MathLogic.Point(5, 5), new MathLogic.Point(5, 7), new MathLogic.Point(8, 7), new MathLogic.Point(8, 5), "Прямокутник");
+            const rhombus = new MathLogic.Rhombus(new MathLogic.Point(6, 0), new MathLogic.Point(7.5, 2), new MathLogic.Point(6, 4), new MathLogic.Point(4.5, 2), "Ромб");
+            const square = new MathLogic.Square(new MathLogic.Point(1, 5), new MathLogic.Point(1, 7), new MathLogic.Point(3, 7), new MathLogic.Point(3, 5), "Квадрат");
 
-        math.addFigure(line);
-        math.addFigure(triangle);
-        math.addFigure(rect);
-        math.addFigure(rhombus);
-        math.addFigure(square);
+            math.addFigure(line);
+            math.addFigure(triangle);
+            math.addFigure(rect);
+            math.addFigure(rhombus);
+            math.addFigure(square);
 
-        setFigures(math.figures);
+            setFigures(math.figures);
 
-        // Логування базових даних
-        math.figures.forEach((f: MathLogic.Figure) => {
-            logs.push(`🔹 [${f.details}] ${f.name}`);
-            logs.push(`   S: ${f.area.toFixed(2)} | P: ${f.perimeter.toFixed(2)}`);
-            logs.push('--------------------------------');
-        });
-        setLog(logs);
+            // Логування базових даних
+            math.figures.forEach((f: MathLogic.Figure) => {
+                logs.push(`🔹 [${f.details}] ${f.name}`);
+                logs.push(`   S: ${f.area.toFixed(2)} | P: ${f.perimeter.toFixed(2)}`);
+                logs.push('--------------------------------');
+            });
+            setLog(logs);
 
-        setStats({
-            maxArea: math.maxAreaFigure?.name,
-            minArea: math.minAreaFigure?.name,
-            maxPerim: math.maxPerimeterFigure?.name,
-            minPerim: math.minPerimeterFigure?.name,
-        });
+            setStats({
+                maxArea: math.maxAreaFigure?.name,
+                minArea: math.minAreaFigure?.name,
+                maxPerim: math.maxPerimeterFigure?.name,
+                minPerim: math.minPerimeterFigure?.name,
+            });
+
+        } catch (error) {
+            logs.push(`❌ ПОМИЛКА ІНІЦІАЛІЗАЦІЇ: ${(error as Error).message}`);
+            setLog(logs);
+        }
     };
 
     // --- Обробники кнопок ---
@@ -89,8 +95,8 @@ export default function Lab2n1() {
         setLoading(true);
         setClosureResult("Аналіз...");
         
-        // Виклик асинхронної функції з замкненням
-        mathRef.current?.analyzeAsync((res) => {
+        // ВИПРАВЛЕННЯ 3: Типізуємо res
+        mathRef.current?.analyzeAsync((res: MathLogic.StringStats) => {
             setLoading(false);
             const text = `⏳ ASYNC RESULT:\nLongest: ${res.longest}\nShortest: ${res.shortest}`;
             setClosureResult(text);
@@ -98,14 +104,42 @@ export default function Lab2n1() {
     };
 
     const handleSyncAnalysis = () => {
-        // Виклик синхронної функції
-        // Це також запустить Constructor Closure, який ми задали при ініціалізації
-        mathRef.current?.analyzeSync((res) => {
-            const text = `⚡ SYNC RESULT:\nLargest (Alpha): ${res.largest}\nSmallest (Alpha): ${res.smallest}`;
-            setClosureResult(text);
-        });
+        try {
+            // ВИПРАВЛЕННЯ 4: Типізуємо res
+            mathRef.current?.analyzeSync((res: MathLogic.StringStats) => {
+                const text = `⚡ SYNC RESULT:\nLargest (Alpha): ${res.largest}\nSmallest (Alpha): ${res.smallest}`;
+                setClosureResult(text);
+            });
+        } catch (error) {
+            // Відловлюємо помилку методу
+            setClosureResult(`❌ ПОМИЛКА:\n${(error as Error).message}`);
+        }
     };
 
+    // НОВА ФУНКЦІЯ: ТЕСТУВАННЯ ПОМИЛОК І ДЖЕНЕРИКІВ
+    const testErrorHandling = () => {
+        const testLogs: string[] = ["--- ТЕСТУВАННЯ ПОМИЛОК ---"];
+
+        // Тест 1: Неправильна Лінія (однакові точки)
+        try {
+            new MathLogic.Line(new MathLogic.Point(0,0), new MathLogic.Point(0,0));
+        } catch (e: any) {
+            testLogs.push(`🚫 Спіймано [${e.name}]: ${e.message}`);
+        }
+
+        // Тест 2: Метод на пустому масиві (Використання Generics)
+        try {
+            // Створюємо Mathematics суворо для Трикутників
+            const emptyMath = new MathLogic.Mathematics<MathLogic.Triangle>(); 
+            emptyMath.analyzeSync(); // Викине помилку, бо пусто
+        } catch (e: any) {
+            testLogs.push(`🚫 Спіймано [${e.name}]: ${e.message}`);
+        }
+
+        setLog(prev => [...testLogs, ...prev]);
+    };
+
+    // --- Візуалізація ---
     const toScreen = (val: number, isY: boolean = false) => {
         if (isY) return CANVAS_SIZE - (val * SCALE + PADDING);
         return val * SCALE + PADDING;
@@ -144,9 +178,12 @@ export default function Lab2n1() {
             </View>
 
             <View style={styles.controlPanel}>
-                <Button title="Async Analyze (1.5s)" onPress={handleAsyncAnalysis} />
-                <View style={{width: 10}} />
-                <Button title="Sync Analyze" onPress={handleSyncAnalysis} color="orange" />
+                <Button title="Async (1.5s)" onPress={handleAsyncAnalysis} />
+                <View style={{width: 5}} />
+                <Button title="Sync" onPress={handleSyncAnalysis} color="orange" />
+                <View style={{width: 5}} />
+                {/* Нова кнопка для тесту помилок */}
+                <Button title="Test Errors" onPress={testErrorHandling} color="red" />
             </View>
 
             <View style={styles.resultBox}>
