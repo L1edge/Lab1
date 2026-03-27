@@ -1,6 +1,7 @@
 import React from "react";
 import { Image } from "expo-image";
-import { Platform, StyleSheet } from "react-native";
+// ВИПРАВЛЕННЯ 1: Додано View та TouchableOpacity
+import { Platform, StyleSheet, View, TouchableOpacity } from "react-native";
 
 import { Collapsible } from "@/components/ui/collapsible";
 import { ExternalLink } from "@/components/external-link";
@@ -9,17 +10,20 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { Fonts } from "@/constants/theme";
+
+// Лабораторні імпорти
 import * as Elements1 from "@/constants/lab1/elements1-lab1";
 import * as Elements2 from "@/constants/lab1/elements2-lab1";
 import * as Elements3 from "@/constants/lab1/elements3-lab1";
-
 import * as Lab2Task1 from "@/constants/lab2/elements1-lab2";
 import * as Lab2Task2 from "@/constants/lab2/elements2-lab2";
 import * as Lab2Task3 from "@/constants/lab2/elements3-lab2";
 
 import Lab3 from '@/components/components-lab3';
-
 import Lab2n1 from '@/components/lab2n1/components-lab2n1';
+
+import { Link } from 'expo-router';
+import Task1 from '@/components/lab5/Task1';
 
 export default function TabTwoScreen() {
   return (
@@ -75,12 +79,12 @@ export default function TabTwoScreen() {
               </ThemedText>
             </React.Fragment>
           ))}
-<ThemedText>
-  {Elements3.decimalNumber1?.toString() ?? "Значення не задане"}
-</ThemedText>
-<ThemedText>
-  {Elements3.decimalNumber2?.toString() ?? "Значення не задане"}
-</ThemedText>
+          <ThemedText>
+            {Elements3.decimalNumber1?.toString() ?? "Значення не задане"}
+          </ThemedText>
+          <ThemedText>
+            {Elements3.decimalNumber2?.toString() ?? "Значення не задане"}
+          </ThemedText>
         </ThemedView>
       </Collapsible>
 
@@ -88,24 +92,21 @@ export default function TabTwoScreen() {
         <ThemedView>
             <ThemedText style={{ fontWeight: "700" }}>Task 1 (Arrays)</ThemedText>
             
-            {/* Проходимось по всіх експортах з файлу elements1-lab2 */}
             {Object.entries(Lab2Task1).map(([key, value]) => (
                 <ThemedView key={key} style={{ marginBottom: 4 }}>
                     <ThemedText style={{ color: '#888', fontSize: 12 }}>{key}:</ThemedText>
                     <ThemedText>
-                        {/* Перевірка: якщо масив, з'єднати коми, інакше перетворити в рядок */}
                         {Array.isArray(value) ? `[${value.join(', ')}]` : String(value)}
                     </ThemedText>
                 </ThemedView>
             ))}
-              {/* --- TASK 2 (Sets) --- */}
+
               <ThemedText style={{ fontWeight: "700", marginTop: 10 }}>Task 2 (Sets)</ThemedText>
 
               {Object.entries(Lab2Task2).map(([key, value]) => (
                 <ThemedView key={key} style={{ marginBottom: 4 }}>
                   <ThemedText style={{ color: '#888', fontSize: 12 }}>{key}:</ThemedText>
                   <ThemedText>
-                    {/* ПЕРЕВІРКА: Якщо це Set -> перетворюємо в масив -> з'єднуємо комою */}
                     {value instanceof Set 
                       ? `{ ${Array.from(value).join(', ')} }` 
                       : Array.isArray(value) 
@@ -115,23 +116,21 @@ export default function TabTwoScreen() {
                 </ThemedView>
               ))}
 
-
-                {/* --- TASK 3: Dictionaries (НОВЕ) --- */}
-                    <ThemedText style={{ fontWeight: "700", marginTop: 10 }}>Task 3 (Dictionaries)</ThemedText>
-                    {Object.entries(Lab2Task3).map(([key, value]) => (
-                      <ThemedView key={key} style={{ marginBottom: 4 }}>
-                        <ThemedText style={{ color: '#888', fontSize: 12 }}>{key}:</ThemedText>
-                        <ThemedText>
-                            {/* Перевірка: якщо це об'єкт (але не null і не масив), виводимо як JSON */}
-                            {typeof value === 'object' && value !== null && !Array.isArray(value)
-                                ? JSON.stringify(value).replace(/,/g, ', ') // Красивий JSON в один рядок
-                                : Array.isArray(value)
-                                    ? `[${value.join(', ')}]`
-                                    : String(value)
-                            }
-                        </ThemedText>
-                      </ThemedView>
-                    ))}
+              <ThemedText style={{ fontWeight: "700", marginTop: 10 }}>Task 3 (Dictionaries)</ThemedText>
+              
+              {Object.entries(Lab2Task3).map(([key, value]) => (
+                <ThemedView key={key} style={{ marginBottom: 4 }}>
+                  <ThemedText style={{ color: '#888', fontSize: 12 }}>{key}:</ThemedText>
+                  <ThemedText>
+                      {typeof value === 'object' && value !== null && !Array.isArray(value)
+                          ? JSON.stringify(value).replace(/,/g, ', ')
+                          : Array.isArray(value)
+                              ? `[${value.join(', ')}]`
+                              : String(value)
+                      }
+                  </ThemedText>
+                </ThemedView>
+              ))}
         </ThemedView>
       </Collapsible>
 
@@ -140,9 +139,36 @@ export default function TabTwoScreen() {
         <Lab3 />
       </Collapsible>
 
-      {/* --- НОВИЙ БЛОК ДЛЯ LAB 2 N1 (Geometry) --- */}
       <Collapsible title="Lab 2.1-2.2">
         <Lab2n1 />
+      </Collapsible>
+
+      <Collapsible title="Lab 5 (AutoLayout)">
+        <ThemedView>
+          <ThemedText style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 10 }}>
+            Task 1 (Rotate device to test)
+          </ThemedText>
+          <Task1 />
+
+          <View style={{ height: 20 }} />
+
+          <ThemedText style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 10 }}>
+            Task 2 (Navigation)
+          </ThemedText>
+          {/* ВИПРАВЛЕННЯ 2: Додано as any до href */}
+          <Link href={"/lab5" as any} asChild>
+            <TouchableOpacity style={{ backgroundColor: 'rgba(90, 70, 147, 1)', padding: 15, borderRadius: 8, alignItems: 'center' }}>
+              <ThemedText style={{ color: 'white', fontWeight: 'bold' }}>
+                Open Task 2 Navigation Screens
+              </ThemedText>
+            </TouchableOpacity>
+          </Link>
+
+       <Link href={"/clock" as any} style={{ color: '#007AFF', marginTop: 15, fontSize: 16, fontWeight: 'bold' }}>
+          Open Lab 15 (Clock App)
+        </Link>
+
+        </ThemedView>
       </Collapsible>
 
     </ParallaxScrollView>
